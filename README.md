@@ -114,6 +114,65 @@ The app will be available at `http://localhost:3000`
 - **Database**: MongoDB with Motor (async driver) & Beanie ODM
 - **Frontend**: Next.js 16, TypeScript, Tailwind CSS
 - **PWA**: next-pwa for offline support
+- **Containerization**: Docker & Docker Compose
+
+## Docker Setup
+
+### Prerequisites
+
+- Docker
+- Docker Compose
+
+### Running with Docker Compose
+
+The easiest way to run the entire application stack:
+
+```bash
+# Build and start all services (MongoDB, Backend, Frontend)
+docker compose up --build
+
+# Run in detached mode (background)
+docker compose up --build -d
+
+# Stop all services
+docker compose down
+
+# Stop and remove volumes (clears database)
+docker compose down -v
+```
+
+### Services
+
+| Service  | URL                     | Description           |
+|----------|-------------------------|-----------------------|
+| Frontend | http://localhost:3000   | Next.js web app       |
+| Backend  | http://localhost:8000   | FastAPI REST API      |
+| MongoDB  | localhost:27017         | Database              |
+
+### Building Individual Images
+
+```bash
+# Build backend image
+docker build -t lets-learn-backend ./backend
+
+# Build frontend image
+docker build -t lets-learn-frontend ./frontend
+
+# Run backend container
+docker run -p 8000:8000 -e MONGODB_URL=mongodb://host.docker.internal:27017 lets-learn-backend
+
+# Run frontend container
+docker run -p 3000:3000 lets-learn-frontend
+```
+
+### Environment Variables
+
+**Backend:**
+- `MONGODB_URL` - MongoDB connection string (default: `mongodb://mongodb:27017`)
+- `DATABASE_NAME` - Database name (default: `lets_learn`)
+
+**Frontend:**
+- `NEXT_PUBLIC_API_URL` - Backend API URL for client-side requests (default: `http://localhost:8000`)
 
 ## License
 
