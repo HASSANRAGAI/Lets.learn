@@ -1,0 +1,180 @@
+{
+  "common": {
+    "appName": "Lets Learn",
+    "tagline": "Scratch for Kids!",
+    "startLearning": "Let's Start Learning! 🎉",
+    "loading": "Loading...",
+    "error": "Oops! Something went wrong",
+    "back": "Back",
+    "next": "Next",
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "save": "Save",
+    "close": "Close",
+    "login": "Login",
+    "logout": "Logout",
+    "signup": "Sign Up",
+    "email": "Email",
+    "password": "Password",
+    "username": "Username"
+  },
+  "home": {
+    "hero": {
+      "title": "🐱 Meet Scratch!",
+      "subtitle": "Learn to code with fun games and adventures! Perfect for kids age 7 and up."
+    },
+    "features": {
+      "funColorful": {
+        "title": "Fun & Colorful",
+        "description": "Create colorful projects and bring your ideas to life!"
+      },
+      "easyLearn": {
+        "title": "Easy to Learn",
+        "description": "Step-by-step lessons designed just for young learners!"
+      },
+      "earnBadges": {
+        "title": "Earn Badges",
+        "description": "Complete lessons and collect awesome achievement badges!"
+      }
+    },
+    "adventure": {
+      "title": "🚀 Start Your Adventure!"
+    },
+    "footer": {
+      "main": "🎮 Lets Learn - Making coding fun for kids!",
+      "offline": "Works offline too! Install as an app on your device."
+    }
+  },
+  "lessons": {
+    "meetScratch": {
+      "title": "Meet Scratch the Cat!",
+      "description": "Learn about your new friend Scratch and how to make him move!"
+    },
+    "makeDance": {
+      "title": "Making Scratch Dance",
+      "description": "Teach Scratch some cool dance moves with simple commands!"
+    },
+    "sayHello": {
+      "title": "Scratch Says Hello!",
+      "description": "Make Scratch talk and say funny things!"
+    },
+    "duration": "min"
+  },
+  "tutorial": {
+    "tryIt": "Try It!",
+    "readAloud": "Read Aloud 🔊",
+    "stopReading": "Stop Reading 🔇",
+    "hintButton": "Need a Hint? 💡",
+    "nextStep": "Next Step →",
+    "prevStep": "← Previous",
+    "complete": "Complete! 🎉"
+  },
+  "playground": {
+    "title": "Scratch Playground 🎮",
+    "subtitle": "Drag blocks and create your own projects!",
+    "run": "Run ▶️",
+    "stop": "Stop ⏹️",
+    "clear": "Clear All 🗑️",
+    "share": "Share with Friends 📤",
+    "exportImage": "Save as Image 🖼️",
+    "exportGif": "Save as GIF 🎬"
+  },
+  "badges": {
+    "title": "Your Badges 🏆",
+    "empty": "Complete lessons to earn badges!",
+    "earned": "You earned: {{badge}}!",
+    "firstSteps": {
+      "title": "First Steps!",
+      "description": "Complete your first lesson",
+      "funny": "You just made a cat walk! What's next, flying pigs?"
+    },
+    "robotBurp": {
+      "title": "Robot Burp!",
+      "description": "You just made a robot burp!",
+      "funny": "BURRRP! That robot needs some manners! 🤖"
+    },
+    "danceKing": {
+      "title": "Dance King!",
+      "description": "Made Scratch dance for the first time",
+      "funny": "Scratch has got the moves! Can YOU dance like that? 💃"
+    },
+    "chatty": {
+      "title": "Chatty Cat!",
+      "description": "Made Scratch say 5 things",
+      "funny": "Scratch talks more than my grandma now! 🐱"
+    }
+  },
+  "coins": {
+    "title": "Scratchy Coins",
+    "earned": "+{{amount}} coins!",
+    "total": "{{amount}} coins",
+    "shop": "Coin Shop 🛒"
+  },
+  "hints": {
+    "stuck": "Hmm, looks like you're stuck!",
+    "tryThis": "Try this:",
+    "dragBlock": "Drag the {{block}} block here!",
+    "clickHere": "Click on this button!",
+    "almostThere": "Almost there! You're doing great! 🌟"
+  },
+  "avatar": {
+    "title": "Customize Your Avatar 🎨",
+    "colors": "Colors",
+    "accessories": "Accessories",
+    "save": "Save Avatar",
+    "preview": "Preview"
+  },
+  "leaderboard": {
+    "title": "Top Coders 🏆",
+    "rank": "Rank",
+    "name": "Name",
+    "coins": "Coins",
+    "you": "You!"
+  },
+  "dailyChallenge": {
+    "title": "Daily Challenge 🎯",
+    "newChallenge": "New challenge available!",
+    "completed": "Challenge completed!",
+    "reward": "+{{coins}} Scratchy Coins!"
+  },
+  "characters": {
+    "scratchy": {
+      "name": "Scratchy",
+      "greeting": "Meow! Ready to learn some cool stuff?",
+      "jokes": {
+        "intro": "Why did the cat sit on the computer? To keep an eye on the mouse! 🐱",
+        "dance": "What do you call a dancing cat? A meow-ver and shaker! 💃",
+        "hello": "Knock knock! Who's there? Scratch. Scratch who? Scratch my back and I'll teach you to code! 😄"
+      }
+    },
+    "robbie": {
+      "name": "Robbie Robot",
+      "greeting": "BEEP BOOP! Let's learn together!",
+      "jokes": {
+        "intro": "Why did the robot go on vacation? To recharge its batteries! 🔋",
+        "dance": "How do robots dance? They do the robot! 🤖",
+        "hello": "What does a robot do at lunchtime? Has a byte! 🍕"
+      }
+    }
+  },
+  "dashboard": {
+    "title": "Progress Dashboard 📊",
+    "lessonsCompleted": "Lessons Completed",
+    "totalCoins": "Total Coins",
+    "currentStreak": "Current Streak",
+    "badges": "Badges Earned",
+    "recentActivity": "Recent Activity",
+    "viewAll": "View All"
+  },
+  "auth": {
+    "welcomeBack": "Welcome back!",
+    "createAccount": "Create your account",
+    "loginButton": "Login",
+    "signupButton": "Sign Up",
+    "forgotPassword": "Forgot password?",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?",
+    "loginError": "Wrong email or password. Try again!",
+    "signupSuccess": "Account created! Let's start learning!"
+  }
+}
