@@ -172,7 +172,7 @@ docker run -p 3000:3000 lets-learn-frontend
 - `DATABASE_NAME` - Database name (default: `lets_learn`)
 
 **Frontend:**
-- `NEXT_PUBLIC_API_URL` - Backend API URL (default: `http://backend:8000`)
+- `NEXT_PUBLIC_API_URL` - Backend API URL for client-side requests (default: `http://localhost:8000`)
 
 ## License
 
