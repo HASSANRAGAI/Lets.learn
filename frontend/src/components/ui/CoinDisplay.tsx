@@ -18,9 +18,9 @@ export function CoinDisplay({ amount, showAnimation = false, size = 'md' }: Coin
   useEffect(() => {
     // Only animate when amount changes, not on initial render
     if (showAnimation && amount !== prevAmountRef.current) {
-      requestAnimationFrame(() => {
-        setIsAnimating(true);
-      });
+      // Animation state, intentional for UI feedback
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setIsAnimating(true);
       const timer = setTimeout(() => {
         setDisplayAmount(amount);
         setIsAnimating(false);
@@ -28,13 +28,10 @@ export function CoinDisplay({ amount, showAnimation = false, size = 'md' }: Coin
       prevAmountRef.current = amount;
       return () => clearTimeout(timer);
     }
-    // For non-animated updates or initial render
-    if (amount !== prevAmountRef.current || displayAmount !== amount) {
+    // For non-animated updates
+    if (amount !== displayAmount) {
       prevAmountRef.current = amount;
-      // Schedule for next frame to avoid direct setState in effect
-      requestAnimationFrame(() => {
-        setDisplayAmount(amount);
-      });
+      setDisplayAmount(amount);
     }
   }, [amount, showAnimation, displayAmount]);
 

@@ -15,6 +15,7 @@ class User(Document):
     username: str = Field(..., min_length=3, max_length=50)
     display_name: str = Field(..., min_length=1, max_length=100)
     email: Optional[str] = None
+    password_hash: Optional[str] = None  # Hashed password for authentication
     avatar: Optional[str] = Field(default="default_avatar")
     role: str = Field(default="student")  # student, parent, teacher
     

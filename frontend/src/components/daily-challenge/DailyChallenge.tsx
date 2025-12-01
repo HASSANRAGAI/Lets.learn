@@ -66,13 +66,12 @@ export function DailyChallengeCard({ onComplete }: DailyChallengeCardProps) {
     // Check if already completed today
     const completedDate = localStorage.getItem('dailyChallenge_completed');
     
-    // Use requestAnimationFrame to avoid synchronous setState in effect
-    requestAnimationFrame(() => {
-      setChallenge(todayChallenge);
-      if (completedDate === new Date().toDateString()) {
-        setIsCompleted(true);
-      }
-    });
+    // This is initial data loading, not a cascading render
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setChallenge(todayChallenge);
+    if (completedDate === new Date().toDateString()) {
+      setIsCompleted(true);
+    }
   }, []);
 
   const handleComplete = (success: boolean) => {

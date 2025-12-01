@@ -156,6 +156,7 @@ async def signup(request: SignupRequest):
         username=request.username,
         display_name=request.display_name,
         email=request.email,
+        password_hash=hashed_password,
         avatar="default_avatar",
         role="student",
         scratchy_coins=10,  # Starting coins for new users
@@ -164,9 +165,6 @@ async def signup(request: SignupRequest):
         created_at=datetime.utcnow(),
         updated_at=datetime.utcnow(),
     )
-    
-    # Store hashed password (you might want to add a password_hash field to User model)
-    # For now, we'll store it in a separate way or add to model
     
     await user.insert()
     
@@ -191,8 +189,12 @@ async def login(request: LoginRequest):
             detail="Invalid email or password"
         )
     
-    # For demo purposes, accept any password (in production, verify against stored hash)
-    # TODO: Add password_hash field to User model and verify properly
+    # Verify password
+    if not user.password_hash or not verify_password(request.password, user.password_hash):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid email or password"
+        )
     
     # Update last login
     user.last_login = datetime.utcnow()

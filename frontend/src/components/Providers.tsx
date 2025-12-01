@@ -18,10 +18,9 @@ export function Providers({ children }: ProvidersProps) {
     const lang = localStorage.getItem('language') || 'en';
     document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
     document.documentElement.lang = lang;
-    // Use requestAnimationFrame to avoid synchronous setState in effect
-    requestAnimationFrame(() => {
-      setMounted(true);
-    });
+    // This is a one-time mount effect, not a cascading render
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setMounted(true);
   }, []);
 
   // Prevent hydration mismatch

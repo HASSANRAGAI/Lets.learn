@@ -12,17 +12,13 @@ interface UseSpeechOptions {
 export function useSpeech(options: UseSpeechOptions = {}) {
   const { i18n } = useTranslation();
   const [isSpeaking, setIsSpeaking] = useState(false);
-  const [isSupported, setIsSupported] = useState(false);
+  // Check if browser supports speech synthesis
+  const [isSupported] = useState(() => 
+    typeof window !== 'undefined' && 'speechSynthesis' in window
+  );
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
 
   const { rate = 0.9, pitch = 1.1, volume = 1 } = options;
-
-  useEffect(() => {
-    // Use requestAnimationFrame to avoid synchronous setState in effect
-    requestAnimationFrame(() => {
-      setIsSupported(typeof window !== 'undefined' && 'speechSynthesis' in window);
-    });
-  }, []);
 
   const getVoice = useCallback(() => {
     if (!isSupported) return null;

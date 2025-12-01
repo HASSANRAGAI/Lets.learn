@@ -24,14 +24,13 @@ export function HintSystem({ hints, onHintUsed, characterName = 'scratchy' }: Hi
 
   useEffect(() => {
     if (isVisible) {
-      // Use requestAnimationFrame to avoid synchronous setState in effect
-      requestAnimationFrame(() => {
-        setIsAnimating(true);
-      });
+      // This is animation state, intentional for UI feedback
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setIsAnimating(true);
       const timer = setTimeout(() => setIsAnimating(false), 500);
       return () => clearTimeout(timer);
     }
-  }, [currentHintIndex, isVisible]);
+  }, [isVisible]);
 
   const showHint = () => {
     if (currentHintIndex < hints.length - 1) {

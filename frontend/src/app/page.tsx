@@ -242,11 +242,11 @@ export default function Home() {
                     {t('home.adventure.title')}
                   </h3>
                   <div className="space-y-4">
-                    {sampleLessons.map(lesson => (
+                    {sampleLessons.map((lesson, index) => (
                       <LessonCard
                         key={lesson.id}
                         lesson={lesson}
-                        isCompleted={progress?.totalLessonsCompleted ? parseInt(lesson.id) <= progress.totalLessonsCompleted : false}
+                        isCompleted={progress?.totalLessonsCompleted ? (index + 1) <= progress.totalLessonsCompleted : false}
                         onClick={() => handleStartLesson(lesson)}
                       />
                     ))}
