@@ -5,6 +5,54 @@
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
+// API Response Types
+interface ApiLesson {
+  id: number | string;
+  course_id?: string;
+  title: string;
+  title_ar: string;
+  description: string;
+  description_ar: string;
+  order?: number;
+  difficulty?: string;
+  duration_minutes?: number;
+  coins_reward?: number;
+  character_name?: string;
+  character_joke?: string;
+  character_joke_ar?: string;
+}
+
+interface ApiLeaderboardEntry {
+  rank: number;
+  user_id: string;
+  display_name: string;
+  avatar: string;
+  scratchy_coins: number;
+}
+
+interface ApiUserProgress {
+  total_lessons_completed: number;
+  total_courses_completed: number;
+  total_challenges_completed: number;
+  total_time_spent_seconds: number;
+  current_streak: number;
+  longest_streak: number;
+  daily_challenges_completed?: string[];
+}
+
+interface ApiDailyChallenge {
+  id: string;
+  date: string;
+  title: string;
+  title_ar: string;
+  description: string;
+  description_ar: string;
+  coins_reward: number;
+  joke_of_the_day: string;
+  joke_of_the_day_ar: string;
+  puzzle_type?: string;
+}
+
 /**
  * Get authentication token from localStorage
  */
@@ -34,7 +82,7 @@ function createHeaders(includeAuth: boolean = false): HeadersInit {
 /**
  * Fetch lessons from the backend
  */
-export async function fetchLessons() {
+export async function fetchLessons(): Promise<ApiLesson[]> {
   const response = await fetch(`${API_URL}/api/lessons`, {
     headers: createHeaders(),
   });
@@ -50,7 +98,7 @@ export async function fetchLessons() {
 /**
  * Fetch leaderboard from the backend
  */
-export async function fetchLeaderboard(limit: number = 10) {
+export async function fetchLeaderboard(limit: number = 10): Promise<ApiLeaderboardEntry[]> {
   const response = await fetch(`${API_URL}/api/leaderboard?limit=${limit}`, {
     headers: createHeaders(),
   });
@@ -65,7 +113,7 @@ export async function fetchLeaderboard(limit: number = 10) {
 /**
  * Fetch user progress from the backend
  */
-export async function fetchUserProgress() {
+export async function fetchUserProgress(): Promise<ApiUserProgress> {
   const response = await fetch(`${API_URL}/api/progress`, {
     headers: createHeaders(true),
   });
@@ -80,7 +128,7 @@ export async function fetchUserProgress() {
 /**
  * Complete a lesson
  */
-export async function completeLesson(lessonId: string, coinsEarned: number) {
+export async function completeLesson(lessonId: string, coinsEarned: number): Promise<{ message: string; coins_earned: number; total_coins: number; current_streak: number }> {
   const response = await fetch(`${API_URL}/api/progress/lesson/${lessonId}/complete?coins_earned=${coinsEarned}`, {
     method: 'POST',
     headers: createHeaders(true),
@@ -96,7 +144,7 @@ export async function completeLesson(lessonId: string, coinsEarned: number) {
 /**
  * Fetch daily challenge from the backend
  */
-export async function fetchDailyChallenge() {
+export async function fetchDailyChallenge(): Promise<ApiDailyChallenge> {
   const response = await fetch(`${API_URL}/api/daily-challenge`, {
     headers: createHeaders(),
   });
@@ -111,7 +159,7 @@ export async function fetchDailyChallenge() {
 /**
  * Complete daily challenge
  */
-export async function completeDailyChallenge() {
+export async function completeDailyChallenge(): Promise<{ message: string; coins_earned: number; total_coins: number }> {
   const response = await fetch(`${API_URL}/api/daily-challenge/complete`, {
     method: 'POST',
     headers: createHeaders(true),

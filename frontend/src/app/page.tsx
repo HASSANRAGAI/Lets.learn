@@ -40,7 +40,7 @@ export default function Home() {
         setIsLoadingLessons(true);
         const data = await fetchLessons();
         // Transform API data to match frontend Lesson type
-        const transformedLessons: Lesson[] = data.map((lesson: any) => ({
+        const transformedLessons: Lesson[] = data.map((lesson) => ({
           id: lesson.id?.toString() || '',
           courseId: lesson.course_id || 'basics',
           title: lesson.title || '',
@@ -48,7 +48,7 @@ export default function Home() {
           description: lesson.description || '',
           descriptionAr: lesson.description_ar || '',
           order: lesson.order || 0,
-          difficulty: lesson.difficulty || 'easy',
+          difficulty: (lesson.difficulty as 'easy' | 'medium' | 'hard') || 'easy',
           durationMinutes: lesson.duration_minutes || 10,
           contentBlocks: [],
           scratchBlocks: [],
@@ -79,7 +79,7 @@ export default function Home() {
         setIsLoadingLeaderboard(true);
         const data = await fetchLeaderboard(10);
         // Transform API data to match frontend LeaderboardEntry type
-        const transformedLeaderboard: LeaderboardEntry[] = data.map((entry: any) => ({
+        const transformedLeaderboard: LeaderboardEntry[] = data.map((entry) => ({
           rank: entry.rank || 0,
           userId: entry.user_id || '',
           displayName: entry.display_name || '',
