@@ -8,6 +8,14 @@ import { fetchDailyChallenge, completeDailyChallenge } from '@/services/api';
 import { useAuth } from '@/contexts/AuthContext';
 import type { DailyChallenge } from '@/types';
 
+// Default puzzle data for challenges
+const DEFAULT_PUZZLE_DATA = {
+  type: 'drag-drop' as const,
+  solution: ['move', 'turn', 'move', 'turn'],
+  hint: 'Try moving, then turning!',
+  hintAr: 'جرب الحركة ثم الاستدارة!',
+};
+
 interface DailyChallengeCardProps {
   onComplete?: (coinsEarned: number) => void;
 }
@@ -38,12 +46,7 @@ export function DailyChallengeCard({ onComplete }: DailyChallengeCardProps) {
           titleAr: data.title_ar || '',
           description: data.description || '',
           descriptionAr: data.description_ar || '',
-          puzzleData: {
-            type: 'drag-drop',
-            solution: ['move', 'turn', 'move', 'turn'], // Default solution
-            hint: 'Try moving, then turning!',
-            hintAr: 'جرب الحركة ثم الاستدارة!',
-          },
+          puzzleData: DEFAULT_PUZZLE_DATA,
           coinsReward: data.coins_reward || 15,
           jokeOfTheDay: data.joke_of_the_day || '',
           jokeOfTheDayAr: data.joke_of_the_day_ar || '',
@@ -66,12 +69,7 @@ export function DailyChallengeCard({ onComplete }: DailyChallengeCardProps) {
           titleAr: 'اجعل القط يرقص!',
           description: 'Help Scratch learn a cool dance move',
           descriptionAr: 'ساعد سكراتش ليتعلم حركة رقص رائعة',
-          puzzleData: {
-            type: 'drag-drop',
-            solution: ['move', 'turn', 'move', 'turn'],
-            hint: 'Try moving, then turning!',
-            hintAr: 'جرب الحركة ثم الاستدارة!',
-          },
+          puzzleData: DEFAULT_PUZZLE_DATA,
           coinsReward: 15,
           jokeOfTheDay: 'Why do cats make terrible DJs? Because they always paws the music! 🎵',
           jokeOfTheDayAr: 'لماذا القطط دي جي سيئون؟ لأنهم دائماً يوقفون الموسيقى! 🎵',

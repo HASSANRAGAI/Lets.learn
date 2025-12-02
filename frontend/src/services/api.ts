@@ -170,5 +170,5 @@ export async function completeDailyChallenge(): Promise<{ message: string; coins
     throw new Error(error.detail || 'Failed to complete daily challenge');
   }
   
-  return response.json();
+  return await response.json();
 }
