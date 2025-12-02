@@ -4,45 +4,9 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSpeech } from '@/hooks/useSpeech';
 import { PuzzleGame, defaultBlocks } from '@/components/playground/PuzzleGame';
+import { fetchDailyChallenge, completeDailyChallenge } from '@/services/api';
+import { useAuth } from '@/contexts/AuthContext';
 import type { DailyChallenge } from '@/types';
-
-// Sample daily challenges with jokes
-const dailyChallenges: DailyChallenge[] = [
-  {
-    id: 'dc_1',
-    date: new Date().toISOString(),
-    title: 'Make the Cat Dance!',
-    titleAr: 'اجعل القط يرقص!',
-    description: 'Help Scratch learn a cool dance move',
-    descriptionAr: 'ساعد سكراتش ليتعلم حركة رقص رائعة',
-    puzzleData: {
-      type: 'drag-drop',
-      solution: ['move', 'turn', 'move', 'turn'],
-      hint: 'Try moving, then turning!',
-      hintAr: 'جرب الحركة ثم الاستدارة!',
-    },
-    coinsReward: 15,
-    jokeOfTheDay: 'Why do cats make terrible DJs? Because they always paws the music! 🎵',
-    jokeOfTheDayAr: 'لماذا القطط دي جي سيئون؟ لأنهم دائماً يوقفون الموسيقى! 🎵',
-  },
-  {
-    id: 'dc_2',
-    date: new Date().toISOString(),
-    title: 'Say Hello Three Times!',
-    titleAr: 'قل مرحبا ثلاث مرات!',
-    description: 'Make Scratch greet everyone',
-    descriptionAr: 'اجعل سكراتش يحيي الجميع',
-    puzzleData: {
-      type: 'drag-drop',
-      solution: ['say', 'wait', 'say', 'wait', 'say'],
-      hint: 'Say something, wait, then say again!',
-      hintAr: 'قل شيئاً، انتظر، ثم قل مرة أخرى!',
-    },
-    coinsReward: 20,
-    jokeOfTheDay: 'What did the computer say to Scratch? You\'re a-meow-zing! 😸',
-    jokeOfTheDayAr: 'ماذا قال الكمبيوتر لسكراتش؟ أنت مياو-ذهل! 😸',
-  },
-];
 
 interface DailyChallengeCardProps {
   onComplete?: (coinsEarned: number) => void;
@@ -51,34 +15,94 @@ interface DailyChallengeCardProps {
 export function DailyChallengeCard({ onComplete }: DailyChallengeCardProps) {
   const { t, i18n } = useTranslation();
   const { speak, isSupported } = useSpeech({ rate: 0.9, pitch: 1.1 });
+  const { isAuthenticated } = useAuth();
   const [challenge, setChallenge] = useState<DailyChallenge | null>(null);
   const [isCompleted, setIsCompleted] = useState(false);
   const [showPuzzle, setShowPuzzle] = useState(false);
   const [showJoke, setShowJoke] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const isArabic = i18n.language === 'ar';
 
   useEffect(() => {
-    // Get today's challenge (in a real app, this would come from API)
-    const todayIndex = new Date().getDate() % dailyChallenges.length;
-    const todayChallenge = dailyChallenges[todayIndex];
+    const loadDailyChallenge = async () => {
+      try {
+        setIsLoading(true);
+        const data = await fetchDailyChallenge();
+        
+        // Transform API data to match frontend DailyChallenge type
+        const transformedChallenge: DailyChallenge = {
+          id: data.id || '',
+          date: data.date || new Date().toISOString(),
+          title: data.title || '',
+          titleAr: data.title_ar || '',
+          description: data.description || '',
+          descriptionAr: data.description_ar || '',
+          puzzleData: {
+            type: 'drag-drop',
+            solution: ['move', 'turn', 'move', 'turn'], // Default solution
+            hint: 'Try moving, then turning!',
+            hintAr: 'جرب الحركة ثم الاستدارة!',
+          },
+          coinsReward: data.coins_reward || 15,
+          jokeOfTheDay: data.joke_of_the_day || '',
+          jokeOfTheDayAr: data.joke_of_the_day_ar || '',
+        };
+        
+        setChallenge(transformedChallenge);
+        
+        // Check if already completed today
+        const completedDate = localStorage.getItem('dailyChallenge_completed');
+        if (completedDate === new Date().toDateString()) {
+          setIsCompleted(true);
+        }
+      } catch (error) {
+        console.error('Failed to load daily challenge:', error);
+        // Set a default challenge on error
+        setChallenge({
+          id: 'default',
+          date: new Date().toISOString(),
+          title: 'Make the Cat Dance!',
+          titleAr: 'اجعل القط يرقص!',
+          description: 'Help Scratch learn a cool dance move',
+          descriptionAr: 'ساعد سكراتش ليتعلم حركة رقص رائعة',
+          puzzleData: {
+            type: 'drag-drop',
+            solution: ['move', 'turn', 'move', 'turn'],
+            hint: 'Try moving, then turning!',
+            hintAr: 'جرب الحركة ثم الاستدارة!',
+          },
+          coinsReward: 15,
+          jokeOfTheDay: 'Why do cats make terrible DJs? Because they always paws the music! 🎵',
+          jokeOfTheDayAr: 'لماذا القطط دي جي سيئون؟ لأنهم دائماً يوقفون الموسيقى! 🎵',
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
     
-    // Check if already completed today
-    const completedDate = localStorage.getItem('dailyChallenge_completed');
-    
-    // This is initial data loading, not a cascading render
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setChallenge(todayChallenge);
-    if (completedDate === new Date().toDateString()) {
-      setIsCompleted(true);
-    }
+    loadDailyChallenge();
   }, []);
 
-  const handleComplete = (success: boolean) => {
+  const handleComplete = async (success: boolean) => {
     if (success && challenge) {
       setIsCompleted(true);
       localStorage.setItem('dailyChallenge_completed', new Date().toDateString());
-      onComplete?.(challenge.coinsReward);
+      
+      // Call backend API if authenticated
+      if (isAuthenticated) {
+        try {
+          const result = await completeDailyChallenge();
+          // Backend returns the actual coins earned
+          onComplete?.(result.coins_earned || challenge.coinsReward);
+        } catch (error) {
+          console.error('Failed to complete daily challenge on backend:', error);
+          // Still give coins locally
+          onComplete?.(challenge.coinsReward);
+        }
+      } else {
+        onComplete?.(challenge.coinsReward);
+      }
     }
   };
 
@@ -89,7 +113,7 @@ export function DailyChallengeCard({ onComplete }: DailyChallengeCardProps) {
     }
   };
 
-  if (!challenge) {
+  if (!challenge || isLoading) {
     return (
       <div className="bg-white rounded-2xl shadow-lg p-6 animate-pulse">
         <div className="h-8 bg-gray-200 rounded w-3/4 mb-4"></div>

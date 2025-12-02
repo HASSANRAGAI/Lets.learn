@@ -95,12 +95,3 @@ export function Leaderboard({ entries, currentUserId }: LeaderboardProps) {
     </div>
   );
 }
-
-// Demo data for testing
-export const demoLeaderboardEntries: LeaderboardEntry[] = [
-  { rank: 1, userId: 'user1', displayName: 'Alex', avatar: 'cat_blue', scratchyCoins: 1250 },
-  { rank: 2, userId: 'user2', displayName: 'Sara', avatar: 'bunny_pink', scratchyCoins: 980 },
-  { rank: 3, userId: 'user3', displayName: 'Omar', avatar: 'robot_green', scratchyCoins: 875 },
-  { rank: 4, userId: 'user4', displayName: 'Emma', avatar: 'fox_orange', scratchyCoins: 720 },
-  { rank: 5, userId: 'user5', displayName: 'Max', avatar: 'bear_yellow', scratchyCoins: 650 },
-];
