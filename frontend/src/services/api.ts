@@ -127,6 +127,7 @@ export async function fetchUserProgress(): Promise<ApiUserProgress> {
 
 /**
  * Complete a lesson
+ * Note: Backend expects coins_earned as a query parameter
  */
 export async function completeLesson(lessonId: string, coinsEarned: number): Promise<{ message: string; coins_earned: number; total_coins: number; current_streak: number }> {
   const response = await fetch(`${API_URL}/api/progress/lesson/${lessonId}/complete?coins_earned=${coinsEarned}`, {
@@ -138,7 +139,7 @@ export async function completeLesson(lessonId: string, coinsEarned: number): Pro
     throw new Error('Failed to complete lesson');
   }
   
-  return response.json();
+  return await response.json();
 }
 
 /**

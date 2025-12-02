@@ -9,6 +9,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import type { DailyChallenge } from '@/types';
 
 // Default puzzle data for challenges
+// Note: Backend doesn't provide puzzle_data field yet
+// In the future, this should come from the API response
 const DEFAULT_PUZZLE_DATA = {
   type: 'drag-drop' as const,
   solution: ['move', 'turn', 'move', 'turn'],

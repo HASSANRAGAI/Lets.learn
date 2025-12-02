@@ -51,7 +51,8 @@ export default function Home() {
           difficulty: (lesson.difficulty as 'easy' | 'medium' | 'hard') || 'easy',
           durationMinutes: lesson.duration_minutes || 10,
           contentBlocks: [],
-          // Sensible defaults for lesson capabilities - ideally these would come from API
+          // Note: Backend doesn't provide scratch blocks yet - using empty array
+          // In the future, the API should include specific blocks for each lesson
           scratchBlocks: [],
           hasPuzzle: true,
           hasActivity: true,
