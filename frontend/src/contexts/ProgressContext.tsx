@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import type { UserProgress, LessonProgress, Badge, UserBadge } from '@/types';
 import { useAuth } from './AuthContext';
+import { fetchUserProgress, completeLesson as apiCompleteLesson } from '@/services/api';
 
 interface ProgressContextType {
   progress: UserProgress | null;
@@ -133,25 +134,42 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
       setIsLoading(true);
       
       if (isAuthenticated && user) {
-        // TODO: Load from API
-        const storedProgress = localStorage.getItem(`progress_${user.id}`);
-        const storedLessonProgress = localStorage.getItem(`lesson_progress_${user.id}`);
-        const storedBadges = localStorage.getItem(`badges_${user.id}`);
-        
-        if (storedProgress) {
-          setProgress(JSON.parse(storedProgress));
-        } else {
+        try {
+          // Fetch from API
+          const progressData = await fetchUserProgress();
           setProgress({
             userId: user.id,
-            totalLessonsCompleted: 0,
-            totalCoursesCompleted: 0,
-            totalChallengesCompleted: 0,
-            totalTimeSpentSeconds: 0,
-            currentStreak: 0,
-            longestStreak: 0,
-            dailyChallengesCompleted: [],
+            totalLessonsCompleted: progressData.total_lessons_completed || 0,
+            totalCoursesCompleted: progressData.total_courses_completed || 0,
+            totalChallengesCompleted: progressData.total_challenges_completed || 0,
+            totalTimeSpentSeconds: progressData.total_time_spent_seconds || 0,
+            currentStreak: progressData.current_streak || 0,
+            longestStreak: progressData.longest_streak || 0,
+            dailyChallengesCompleted: progressData.daily_challenges_completed || [],
           });
+        } catch (error) {
+          console.error('Failed to load progress from API:', error);
+          // Fallback to localStorage on error
+          const storedProgress = localStorage.getItem(`progress_${user.id}`);
+          if (storedProgress) {
+            setProgress(JSON.parse(storedProgress));
+          } else {
+            setProgress({
+              userId: user.id,
+              totalLessonsCompleted: 0,
+              totalCoursesCompleted: 0,
+              totalChallengesCompleted: 0,
+              totalTimeSpentSeconds: 0,
+              currentStreak: 0,
+              longestStreak: 0,
+              dailyChallengesCompleted: [],
+            });
+          }
         }
+        
+        // Still load lesson progress and badges from localStorage as they don't have API endpoints yet
+        const storedLessonProgress = localStorage.getItem(`lesson_progress_${user.id}`);
+        const storedBadges = localStorage.getItem(`badges_${user.id}`);
         
         if (storedLessonProgress) {
           setLessonProgress(new Map(JSON.parse(storedLessonProgress)));
@@ -237,7 +255,7 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
     });
   };
 
-  const completeLessons = (lessonId: string, coinsEarned: number) => {
+  const completeLessons = async (lessonId: string, coinsEarned: number) => {
     updateLessonProgress(lessonId, {
       status: 'completed',
       completionPercentage: 100,
@@ -245,6 +263,7 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
       completedAt: new Date().toISOString(),
     });
 
+    // Update local state
     setProgress(prev => {
       if (!prev) return prev;
       const today = new Date().toDateString();
@@ -264,6 +283,16 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
         lastActivityDate: new Date().toISOString(),
       };
     });
+
+    // Call backend API if authenticated
+    if (isAuthenticated && user) {
+      try {
+        await apiCompleteLesson(lessonId, coinsEarned);
+      } catch (error) {
+        console.error('Failed to sync lesson completion with backend:', error);
+        // Continue anyway as we've updated locally
+      }
+    }
 
     // Check for badges
     checkAndAwardBadges();

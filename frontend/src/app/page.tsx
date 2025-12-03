@@ -1,12 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher';
 import { CoinDisplay } from '@/components/ui/CoinDisplay';
 import { Playground } from '@/components/playground/Playground';
 import { DailyChallengeCard } from '@/components/daily-challenge/DailyChallenge';
-import { Leaderboard, demoLeaderboardEntries } from '@/components/leaderboard/Leaderboard';
+import { Leaderboard } from '@/components/leaderboard/Leaderboard';
 import { Dashboard } from '@/components/dashboard/Dashboard';
 import { AvatarCustomizer } from '@/components/avatar/AvatarCustomizer';
 import { AuthModal } from '@/components/auth/AuthForm';
@@ -14,71 +14,8 @@ import { TutorialView, LessonCard } from '@/components/tutorial/TutorialView';
 import { BadgeGrid } from '@/components/badges/BadgeDisplay';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProgress } from '@/contexts/ProgressContext';
-import type { Lesson } from '@/types';
-
-// Sample lessons data
-const sampleLessons: Lesson[] = [
-  {
-    id: '1',
-    courseId: 'basics',
-    title: 'Meet Scratch the Cat!',
-    titleAr: 'تعرف على القط سكراتش!',
-    description: 'Learn about your new friend Scratch and how to make him move!',
-    descriptionAr: 'تعرف على صديقك الجديد سكراتش وكيف تجعله يتحرك!',
-    order: 1,
-    difficulty: 'easy',
-    durationMinutes: 10,
-    contentBlocks: [],
-    scratchBlocks: ['move', 'turn'],
-    hasPuzzle: true,
-    hasActivity: true,
-    hasVideo: false,
-    coinsReward: 10,
-    characterName: 'Scratchy',
-    characterIntroJoke: 'Why did the cat sit on the computer? To keep an eye on the mouse! 🐱',
-    characterIntroJokeAr: 'لماذا جلست القطة على الكمبيوتر؟ لتراقب الفأرة! 🐱',
-  },
-  {
-    id: '2',
-    courseId: 'basics',
-    title: 'Making Scratch Dance',
-    titleAr: 'اجعل سكراتش يرقص',
-    description: 'Teach Scratch some cool dance moves with simple commands!',
-    descriptionAr: 'علم سكراتش بعض حركات الرقص الرائعة بأوامر بسيطة!',
-    order: 2,
-    difficulty: 'easy',
-    durationMinutes: 15,
-    contentBlocks: [],
-    scratchBlocks: ['move', 'turn', 'wait', 'repeat'],
-    hasPuzzle: true,
-    hasActivity: true,
-    hasVideo: false,
-    coinsReward: 15,
-    characterName: 'Scratchy',
-    characterIntroJoke: 'What do you call a dancing cat? A meow-ver and shaker! 💃',
-    characterIntroJokeAr: 'ماذا تسمي قطة راقصة؟ قطة متمايلة! 💃',
-  },
-  {
-    id: '3',
-    courseId: 'basics',
-    title: 'Scratch Says Hello!',
-    titleAr: 'سكراتش يقول مرحبا!',
-    description: 'Make Scratch talk and say funny things!',
-    descriptionAr: 'اجعل سكراتش يتكلم ويقول أشياء مضحكة!',
-    order: 3,
-    difficulty: 'easy',
-    durationMinutes: 10,
-    contentBlocks: [],
-    scratchBlocks: ['say', 'wait', 'think'],
-    hasPuzzle: true,
-    hasActivity: true,
-    hasVideo: false,
-    coinsReward: 10,
-    characterName: 'Scratchy',
-    characterIntroJoke: 'Knock knock! Who\'s there? Scratch. Scratch who? Scratch my back and I\'ll teach you to code! 😄',
-    characterIntroJokeAr: 'طق طق! من هناك؟ سكراتش. سكراتش من؟ حك ظهري وسأعلمك البرمجة! 😄',
-  },
-];
+import { fetchLessons, fetchLeaderboard } from '@/services/api';
+import type { Lesson, LeaderboardEntry } from '@/types';
 
 type View = 'home' | 'playground' | 'dashboard' | 'avatar' | 'leaderboard' | 'tutorial';
 
@@ -91,6 +28,77 @@ export default function Home() {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(null);
   const [scratchyCoins, setScratchyCoins] = useState(user?.scratchyCoins || 50);
+  const [lessons, setLessons] = useState<Lesson[]>([]);
+  const [leaderboardEntries, setLeaderboardEntries] = useState<LeaderboardEntry[]>([]);
+  const [isLoadingLessons, setIsLoadingLessons] = useState(true);
+  const [isLoadingLeaderboard, setIsLoadingLeaderboard] = useState(true);
+
+  // Fetch lessons from API
+  useEffect(() => {
+    const loadLessons = async () => {
+      try {
+        setIsLoadingLessons(true);
+        const data = await fetchLessons();
+        // Transform API data to match frontend Lesson type
+        const transformedLessons: Lesson[] = data.map((lesson) => ({
+          id: lesson.id?.toString() || '',
+          courseId: lesson.course_id || 'basics',
+          title: lesson.title || '',
+          titleAr: lesson.title_ar || '',
+          description: lesson.description || '',
+          descriptionAr: lesson.description_ar || '',
+          order: lesson.order || 0,
+          difficulty: (lesson.difficulty as 'easy' | 'medium' | 'hard') || 'easy',
+          durationMinutes: lesson.duration_minutes || 10,
+          contentBlocks: [],
+          // Note: Backend doesn't provide scratch blocks yet - using empty array
+          // In the future, the API should include specific blocks for each lesson
+          scratchBlocks: [],
+          hasPuzzle: true,
+          hasActivity: true,
+          hasVideo: false,
+          coinsReward: lesson.coins_reward || 10,
+          characterName: lesson.character_name || 'Scratchy',
+          characterIntroJoke: lesson.character_joke || '',
+          characterIntroJokeAr: lesson.character_joke_ar || '',
+        }));
+        setLessons(transformedLessons);
+      } catch (error) {
+        console.error('Failed to fetch lessons:', error);
+        // Keep lessons empty on error
+      } finally {
+        setIsLoadingLessons(false);
+      }
+    };
+
+    loadLessons();
+  }, []);
+
+  // Fetch leaderboard from API
+  useEffect(() => {
+    const loadLeaderboard = async () => {
+      try {
+        setIsLoadingLeaderboard(true);
+        const data = await fetchLeaderboard(10);
+        // Transform API data to match frontend LeaderboardEntry type
+        const transformedLeaderboard: LeaderboardEntry[] = data.map((entry) => ({
+          rank: entry.rank || 0,
+          userId: entry.user_id || '',
+          displayName: entry.display_name || '',
+          avatar: entry.avatar || 'default_avatar',
+          scratchyCoins: entry.scratchy_coins || 0,
+        }));
+        setLeaderboardEntries(transformedLeaderboard);
+      } catch (error) {
+        console.error('Failed to fetch leaderboard:', error);
+        // Keep leaderboard empty on error
+      } finally {
+        setIsLoadingLeaderboard(false);
+      }
+    };
+
+    loadLeaderboard();
+  }, []);
 
   const handleEarnCoins = (amount: number) => {
     setScratchyCoins(prev => prev + amount);
@@ -241,25 +249,37 @@ export default function Home() {
                   <h3 className="text-2xl font-bold text-indigo-800 mb-6 text-center">
                     {t('home.adventure.title')}
                   </h3>
-                  <div className="space-y-4">
-                    {sampleLessons.map((lesson, index) => (
-                      <LessonCard
-                        key={lesson.id}
-                        lesson={lesson}
-                        isCompleted={progress?.totalLessonsCompleted ? (index + 1) <= progress.totalLessonsCompleted : false}
-                        onClick={() => handleStartLesson(lesson)}
-                      />
-                    ))}
-                  </div>
+                  {isLoadingLessons ? (
+                    <div className="text-center py-8">
+                      <p className="text-gray-500">Loading lessons...</p>
+                    </div>
+                  ) : lessons.length === 0 ? (
+                    <div className="text-center py-8">
+                      <p className="text-gray-500">No lessons available yet.</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {lessons.map((lesson, index) => (
+                        <LessonCard
+                          key={lesson.id}
+                          lesson={lesson}
+                          isCompleted={progress?.totalLessonsCompleted ? (index + 1) <= progress.totalLessonsCompleted : false}
+                          onClick={() => handleStartLesson(lesson)}
+                        />
+                      ))}
+                    </div>
+                  )}
 
-                  <div className="text-center mt-8">
-                    <button
-                      onClick={() => handleStartLesson(sampleLessons[0])}
-                      className="bg-indigo-600 text-white px-8 py-3 rounded-full text-lg font-bold hover:bg-indigo-700 transition-colors shadow-lg hover:shadow-xl"
-                    >
-                      {t('common.startLearning')}
-                    </button>
-                  </div>
+                  {lessons.length > 0 && (
+                    <div className="text-center mt-8">
+                      <button
+                        onClick={() => handleStartLesson(lessons[0])}
+                        className="bg-indigo-600 text-white px-8 py-3 rounded-full text-lg font-bold hover:bg-indigo-700 transition-colors shadow-lg hover:shadow-xl"
+                      >
+                        {t('common.startLearning')}
+                      </button>
+                    </div>
+                  )}
                 </section>
               </div>
 
@@ -320,10 +340,16 @@ export default function Home() {
 
         {currentView === 'leaderboard' && (
           <div className="max-w-2xl mx-auto">
-            <Leaderboard
-              entries={demoLeaderboardEntries}
-              currentUserId={user?.id}
-            />
+            {isLoadingLeaderboard ? (
+              <div className="bg-white rounded-2xl shadow-lg p-8 text-center">
+                <p className="text-gray-500">Loading leaderboard...</p>
+              </div>
+            ) : (
+              <Leaderboard
+                entries={leaderboardEntries}
+                currentUserId={user?.id}
+              />
+            )}
           </div>
         )}
       </main>
