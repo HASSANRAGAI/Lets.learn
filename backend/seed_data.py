@@ -34,6 +34,7 @@ async def seed_lessons():
             "coins_reward": 10,
             "character_name": "Scratchy",
             "character_intro_joke": "Why did the cat sit on the computer? To keep an eye on the mouse! 🐱",
+            "character_intro_joke_ar": "لماذا جلست القطة على الكمبيوتر؟ لتراقب الفأرة! 🐱",
         },
         {
             "lesson_id": "lesson_002",
@@ -48,6 +49,7 @@ async def seed_lessons():
             "coins_reward": 15,
             "character_name": "Scratchy",
             "character_intro_joke": "What do you call a dancing cat? A meow-ver and shaker! 💃",
+            "character_intro_joke_ar": "ماذا تسمي القطة الراقصة؟ مياو-حركة ونشاط! 💃",
         },
         {
             "lesson_id": "lesson_003",
@@ -62,6 +64,7 @@ async def seed_lessons():
             "coins_reward": 10,
             "character_name": "Scratchy",
             "character_intro_joke": "Knock knock! Who's there? Scratch. Scratch who? Scratch my back and I'll teach you to code! 😄",
+            "character_intro_joke_ar": "طق طق! من هناك؟ سكراتش. سكراتش من؟ احك ظهري وسأعلمك البرمجة! 😄",
         },
     ]
     
@@ -97,6 +100,7 @@ async def seed_daily_challenges():
             "coins_reward": 15,
             "character_name": "Scratchy",
             "character_intro_joke": "Why do cats make terrible DJs? Because they always paws the music! 🎵",
+            "character_intro_joke_ar": "لماذا القطط دي جي سيئون؟ لأنهم دائماً يوقفون الموسيقى! 🎵",
         },
         {
             "lesson_id": "dc_002",
@@ -111,6 +115,7 @@ async def seed_daily_challenges():
             "coins_reward": 20,
             "character_name": "Scratchy",
             "character_intro_joke": "What did the computer say to Scratch? You're a-meow-zing! 😸",
+            "character_intro_joke_ar": "ماذا قال الكمبيوتر لسكراتش؟ أنت مياو-ذهل! 😸",
         },
         {
             "lesson_id": "dc_003",
@@ -125,6 +130,7 @@ async def seed_daily_challenges():
             "coins_reward": 25,
             "character_name": "Scratchy",
             "character_intro_joke": "Why did the square go to therapy? It had too many issues! 😂",
+            "character_intro_joke_ar": "لماذا ذهب المربع للعلاج؟ كان لديه مشاكل كثيرة! 😂",
         },
         {
             "lesson_id": "dc_004",
@@ -139,6 +145,7 @@ async def seed_daily_challenges():
             "coins_reward": 20,
             "character_name": "Scratchy",
             "character_intro_joke": "What's a cat's favorite color? Purrrrple! 💜",
+            "character_intro_joke_ar": "ما هو اللون المفضل للقطط؟ البنفسجي المواء! 💜",
         },
         {
             "lesson_id": "dc_005",
@@ -153,6 +160,7 @@ async def seed_daily_challenges():
             "coins_reward": 15,
             "character_name": "Scratchy",
             "character_intro_joke": "Where do cats go when they disappear? The purr-allel universe! 🌌",
+            "character_intro_joke_ar": "أين تذهب القطط عندما تختفي؟ إلى الكون المواء-وازي! 🌌",
         },
         {
             "lesson_id": "dc_006",
@@ -167,6 +175,7 @@ async def seed_daily_challenges():
             "coins_reward": 20,
             "character_name": "Scratchy",
             "character_intro_joke": "What sound does a cat computer make? Click, click, meow! 🖱️",
+            "character_intro_joke_ar": "ما الصوت الذي يصدره كمبيوتر القط؟ نقر، نقر، مياو! 🖱️",
         },
         {
             "lesson_id": "dc_007",
@@ -181,6 +190,7 @@ async def seed_daily_challenges():
             "coins_reward": 25,
             "character_name": "Scratchy",
             "character_intro_joke": "Why did the cat keep spinning? It was caught in a fur-loop! 🔄",
+            "character_intro_joke_ar": "لماذا استمرت القطة في الدوران؟ كانت عالقة في حلقة الفرو! 🔄",
         },
     ]
     

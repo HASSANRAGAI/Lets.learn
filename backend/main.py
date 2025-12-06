@@ -76,7 +76,8 @@ async def get_lessons():
                 "duration_minutes": lesson.duration_minutes,
                 "coins_reward": lesson.coins_reward,
                 "character_name": lesson.character_name,
-                "character_joke": lesson.character_intro_joke
+                "character_joke": lesson.character_intro_joke,
+                "character_joke_ar": lesson.character_intro_joke_ar
             }
             for lesson in lessons
         ]
