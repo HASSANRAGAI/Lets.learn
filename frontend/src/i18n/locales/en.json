@@ -135,7 +135,8 @@
     "title": "Daily Challenge 🎯",
     "newChallenge": "New challenge available!",
     "completed": "Challenge completed!",
-    "reward": "+{{coins}} Scratchy Coins!"
+    "reward": "+{{coins}} Scratchy Coins!",
+    "tellJoke": "Tell me today's joke!"
   },
   "characters": {
     "scratchy": {

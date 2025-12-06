@@ -161,7 +161,7 @@ export function DailyChallengeCard({ onComplete }: DailyChallengeCardProps) {
                 className="w-full mb-4 py-3 bg-purple-100 hover:bg-purple-200 text-purple-700 rounded-xl font-bold transition-colors flex items-center justify-center gap-2"
               >
                 <span className="text-xl">😄</span>
-                <span>Tell me today&apos;s joke!</span>
+                <span>{t('dailyChallenge.tellJoke')}</span>
               </button>
             ) : (
               <div className="mb-4 bg-purple-50 rounded-xl p-4 border-2 border-purple-200">
