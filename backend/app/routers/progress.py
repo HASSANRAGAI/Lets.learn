@@ -39,88 +39,6 @@ class DailyChallenge(BaseModel):
     puzzle_type: str = "drag-drop"
 
 
-# Sample daily challenges
-DAILY_CHALLENGES = [
-    {
-        "id": "dc_1",
-        "title": "Make the Cat Dance!",
-        "title_ar": "اجعل القط يرقص!",
-        "description": "Help Scratch learn a cool dance move",
-        "description_ar": "ساعد سكراتش ليتعلم حركة رقص رائعة",
-        "coins_reward": 15,
-        "joke_of_the_day": "Why do cats make terrible DJs? Because they always paws the music! 🎵",
-        "joke_of_the_day_ar": "لماذا القطط دي جي سيئون؟ لأنهم دائماً يوقفون الموسيقى! 🎵",
-        "puzzle_type": "drag-drop"
-    },
-    {
-        "id": "dc_2",
-        "title": "Say Hello Three Times!",
-        "title_ar": "قل مرحبا ثلاث مرات!",
-        "description": "Make Scratch greet everyone",
-        "description_ar": "اجعل سكراتش يحيي الجميع",
-        "coins_reward": 20,
-        "joke_of_the_day": "What did the computer say to Scratch? You're a-meow-zing! 😸",
-        "joke_of_the_day_ar": "ماذا قال الكمبيوتر لسكراتش؟ أنت مياو-ذهل! 😸",
-        "puzzle_type": "drag-drop"
-    },
-    {
-        "id": "dc_3",
-        "title": "Move in a Square!",
-        "title_ar": "تحرك في مربع!",
-        "description": "Can you make Scratch walk in a square?",
-        "description_ar": "هل يمكنك جعل سكراتش يمشي في مربع؟",
-        "coins_reward": 25,
-        "joke_of_the_day": "Why did the square go to therapy? It had too many issues! 😂",
-        "joke_of_the_day_ar": "لماذا ذهب المربع للعلاج؟ كان لديه مشاكل كثيرة! 😂",
-        "puzzle_type": "drag-drop"
-    },
-    {
-        "id": "dc_4",
-        "title": "Color Change Magic!",
-        "title_ar": "سحر تغيير الألوان!",
-        "description": "Make Scratch change colors like magic!",
-        "description_ar": "اجعل سكراتش يغير ألوانه كالسحر!",
-        "coins_reward": 20,
-        "joke_of_the_day": "What's a cat's favorite color? Purrrrple! 💜",
-        "joke_of_the_day_ar": "ما هو اللون المفضل للقطط؟ البنفسجي المواء! 💜",
-        "puzzle_type": "drag-drop"
-    },
-    {
-        "id": "dc_5",
-        "title": "Hide and Seek!",
-        "title_ar": "الغميضة!",
-        "description": "Make Scratch disappear and reappear!",
-        "description_ar": "اجعل سكراتش يختفي ويظهر!",
-        "coins_reward": 15,
-        "joke_of_the_day": "Where do cats go when they disappear? The purr-allel universe! 🌌",
-        "joke_of_the_day_ar": "أين تذهب القطط عندما تختفي؟ إلى الكون المواء-وازي! 🌌",
-        "puzzle_type": "drag-drop"
-    },
-    {
-        "id": "dc_6",
-        "title": "Sound Effects Master!",
-        "title_ar": "سيد المؤثرات الصوتية!",
-        "description": "Add funny sounds to Scratch",
-        "description_ar": "أضف أصوات مضحكة لسكراتش",
-        "coins_reward": 20,
-        "joke_of_the_day": "What sound does a cat computer make? Click, click, meow! 🖱️",
-        "joke_of_the_day_ar": "ما الصوت الذي يصدره كمبيوتر القط؟ نقر، نقر، مياو! 🖱️",
-        "puzzle_type": "drag-drop"
-    },
-    {
-        "id": "dc_7",
-        "title": "Loop de Loop!",
-        "title_ar": "حلقة دي حلقة!",
-        "description": "Use a loop to make Scratch spin around",
-        "description_ar": "استخدم حلقة لجعل سكراتش يدور",
-        "coins_reward": 25,
-        "joke_of_the_day": "Why did the cat keep spinning? It was caught in a fur-loop! 🔄",
-        "joke_of_the_day_ar": "لماذا استمرت القطة في الدوران؟ كانت عالقة في حلقة الفرو! 🔄",
-        "puzzle_type": "drag-drop"
-    },
-]
-
-
 @router.get("/leaderboard", response_model=List[LeaderboardEntry])
 async def get_leaderboard(limit: int = 10):
     """Get top users by Scratchy Coins."""
@@ -143,22 +61,33 @@ async def get_leaderboard(limit: int = 10):
 @router.get("/daily-challenge", response_model=DailyChallenge)
 async def get_daily_challenge():
     """Get today's daily challenge."""
+    from app.models.course import Lesson
+    
+    # Get all daily challenges from database
+    challenges = await Lesson.find(Lesson.course_id == "daily_challenges").sort("+order").to_list()
+    
+    if not challenges:
+        raise HTTPException(
+            status_code=404,
+            detail="No daily challenges available"
+        )
+    
     # Get challenge based on day of year
     today = date.today()
-    challenge_index = today.timetuple().tm_yday % len(DAILY_CHALLENGES)
-    challenge = DAILY_CHALLENGES[challenge_index]
+    challenge_index = today.timetuple().tm_yday % len(challenges)
+    challenge = challenges[challenge_index]
     
     return DailyChallenge(
-        id=challenge["id"],
+        id=challenge.lesson_id,
         date=today.isoformat(),
-        title=challenge["title"],
-        title_ar=challenge["title_ar"],
-        description=challenge["description"],
-        description_ar=challenge["description_ar"],
-        coins_reward=challenge["coins_reward"],
-        joke_of_the_day=challenge["joke_of_the_day"],
-        joke_of_the_day_ar=challenge["joke_of_the_day_ar"],
-        puzzle_type=challenge["puzzle_type"]
+        title=challenge.title,
+        title_ar=challenge.title_ar,
+        description=challenge.description,
+        description_ar=challenge.description_ar,
+        coins_reward=challenge.coins_reward,
+        joke_of_the_day=challenge.character_intro_joke or "",
+        joke_of_the_day_ar=challenge.character_intro_joke_ar or "",
+        puzzle_type="drag-drop"
     )
 
 
@@ -167,9 +96,21 @@ async def complete_daily_challenge(
     current_user: User = Depends(get_current_user)
 ):
     """Complete today's daily challenge and earn coins."""
+    from app.models.course import Lesson
+    
     today = date.today()
-    challenge_index = today.timetuple().tm_yday % len(DAILY_CHALLENGES)
-    challenge = DAILY_CHALLENGES[challenge_index]
+    
+    # Get all daily challenges from database
+    challenges = await Lesson.find(Lesson.course_id == "daily_challenges").sort("+order").to_list()
+    
+    if not challenges:
+        raise HTTPException(
+            status_code=404,
+            detail="No daily challenges available"
+        )
+    
+    challenge_index = today.timetuple().tm_yday % len(challenges)
+    challenge = challenges[challenge_index]
     
     # Check if already completed today
     progress = await Progress.find_one(Progress.user_id == str(current_user.id))
@@ -181,7 +122,7 @@ async def complete_daily_challenge(
         )
     
     # Award coins
-    current_user.scratchy_coins += challenge["coins_reward"]
+    current_user.scratchy_coins += challenge.coins_reward
     await current_user.save()
     
     # Update progress
@@ -200,7 +141,7 @@ async def complete_daily_challenge(
     
     return {
         "message": "Challenge completed!",
-        "coins_earned": challenge["coins_reward"],
+        "coins_earned": challenge.coins_reward,
         "total_coins": current_user.scratchy_coins
     }
 

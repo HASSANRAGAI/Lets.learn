@@ -19,14 +19,14 @@ async def init_db():
     """Initialize MongoDB connection and Beanie ODM."""
     from app.models.user import User
     from app.models.progress import Progress
-    from app.models.achievement import Achievement
+    from app.models.achievement import Achievement, AchievementDefinition
     from app.models.course import Course, Lesson
 
     client = AsyncIOMotorClient(MONGODB_URL)
     
     await init_beanie(
         database=client[DATABASE_NAME],
-        document_models=[User, Progress, Achievement, Course, Lesson]
+        document_models=[User, Progress, Achievement, AchievementDefinition, Course, Lesson]
     )
 
 

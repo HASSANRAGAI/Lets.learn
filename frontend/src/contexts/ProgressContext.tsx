@@ -3,7 +3,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import type { UserProgress, LessonProgress, Badge, UserBadge } from '@/types';
 import { useAuth } from './AuthContext';
-import { fetchUserProgress, completeLesson as apiCompleteLesson } from '@/services/api';
+import { fetchUserProgress, completeLesson as apiCompleteLesson, fetchBadges } from '@/services/api';
 
 interface ProgressContextType {
   progress: UserProgress | null;
@@ -19,114 +19,42 @@ interface ProgressContextType {
 
 const ProgressContext = createContext<ProgressContextType | undefined>(undefined);
 
-// Default badges definitions
-const defaultBadges: Badge[] = [
-  {
-    id: 'first_steps',
-    title: 'First Steps!',
-    titleAr: 'الخطوات الأولى!',
-    description: 'Complete your first lesson',
-    descriptionAr: 'أكمل درسك الأول',
-    icon: '👣',
-    category: 'general',
-    requirementType: 'lessons_completed',
-    requirementValue: 1,
-    coinsReward: 10,
-    funnyMessage: 'You just made a cat walk! What\'s next, flying pigs?',
-    funnyMessageAr: 'لقد جعلت قطة تمشي! ما التالي، خنازير طائرة؟',
-  },
-  {
-    id: 'robot_burp',
-    title: 'Robot Burp!',
-    titleAr: 'تجشؤ الروبوت!',
-    description: 'You just made a robot burp!',
-    descriptionAr: 'لقد جعلت الروبوت يتجشأ!',
-    icon: '🤖',
-    category: 'coding',
-    requirementType: 'special_action',
-    requirementValue: 1,
-    coinsReward: 15,
-    funnyMessage: 'BURRRP! That robot needs some manners!',
-    funnyMessageAr: 'بررررب! هذا الروبوت يحتاج بعض الأدب!',
-  },
-  {
-    id: 'dance_king',
-    title: 'Dance King!',
-    titleAr: 'ملك الرقص!',
-    description: 'Made Scratch dance for the first time',
-    descriptionAr: 'جعلت سكراتش يرقص لأول مرة',
-    icon: '💃',
-    category: 'creativity',
-    requirementType: 'dance_lesson_completed',
-    requirementValue: 1,
-    coinsReward: 15,
-    funnyMessage: 'Scratch has got the moves! Can YOU dance like that?',
-    funnyMessageAr: 'سكراتش يرقص بروعة! هل تستطيع الرقص مثله؟',
-  },
-  {
-    id: 'chatty_cat',
-    title: 'Chatty Cat!',
-    titleAr: 'قط ثرثار!',
-    description: 'Made Scratch say 5 things',
-    descriptionAr: 'جعلت سكراتش يقول 5 أشياء',
-    icon: '💬',
-    category: 'creativity',
-    requirementType: 'speech_blocks_used',
-    requirementValue: 5,
-    coinsReward: 20,
-    funnyMessage: 'Scratch talks more than my grandma now!',
-    funnyMessageAr: 'سكراتش يتكلم أكثر من جدتي الآن!',
-  },
-  {
-    id: 'streak_3',
-    title: '3 Day Streak!',
-    titleAr: 'سلسلة 3 أيام!',
-    description: 'Learn for 3 days in a row',
-    descriptionAr: 'تعلم لمدة 3 أيام متتالية',
-    icon: '🔥',
-    category: 'streak',
-    requirementType: 'streak_days',
-    requirementValue: 3,
-    coinsReward: 25,
-    funnyMessage: 'You\'re on fire! Not literally though, stay cool! 🧊',
-    funnyMessageAr: 'أنت مشتعل! ليس حرفياً، ابق هادئاً! 🧊',
-  },
-  {
-    id: 'puzzle_master',
-    title: 'Puzzle Master!',
-    titleAr: 'سيد الألغاز!',
-    description: 'Complete 5 puzzle games',
-    descriptionAr: 'أكمل 5 ألعاب ألغاز',
-    icon: '🧩',
-    category: 'coding',
-    requirementType: 'puzzles_completed',
-    requirementValue: 5,
-    coinsReward: 30,
-    funnyMessage: 'You solved puzzles like a detective! 🕵️',
-    funnyMessageAr: 'حللت الألغاز مثل المحقق! 🕵️',
-  },
-  {
-    id: 'coin_collector',
-    title: 'Coin Collector!',
-    titleAr: 'جامع العملات!',
-    description: 'Earn 100 Scratchy Coins',
-    descriptionAr: 'اكسب 100 عملة سكراتشي',
-    icon: '🪙',
-    category: 'general',
-    requirementType: 'total_coins',
-    requirementValue: 100,
-    coinsReward: 50,
-    funnyMessage: 'Cha-ching! You\'re rich in Scratchy Coins! 💰',
-    funnyMessageAr: 'تشا-تشينغ! أنت غني بعملات سكراتشي! 💰',
-  },
-];
-
 export function ProgressProvider({ children }: { children: ReactNode }) {
   const { user, isAuthenticated } = useAuth();
   const [progress, setProgress] = useState<UserProgress | null>(null);
   const [lessonProgress, setLessonProgress] = useState<Map<string, LessonProgress>>(new Map());
   const [badges, setBadges] = useState<UserBadge[]>([]);
+  const [allBadges, setAllBadges] = useState<Badge[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+
+  // Load badge definitions from API
+  useEffect(() => {
+    const loadBadges = async () => {
+      try {
+        const badgesData = await fetchBadges();
+        const mappedBadges: Badge[] = badgesData.map(badge => ({
+          id: badge.id || '',
+          title: badge.title || 'Achievement',
+          titleAr: badge.title_ar || 'إنجاز',
+          description: badge.description || '',
+          descriptionAr: badge.description_ar || '',
+          icon: badge.icon || '🏆',
+          category: badge.category || 'general',
+          requirementType: badge.requirement_type || '',
+          requirementValue: badge.requirement_value || 0,
+          coinsReward: badge.coins_reward || 0,
+          funnyMessage: badge.funny_message || '',
+          funnyMessageAr: badge.funny_message_ar || '',
+        }));
+        setAllBadges(mappedBadges);
+      } catch (error) {
+        console.error('Failed to load badges from API:', error);
+        // Keep allBadges empty if API fails
+      }
+    };
+    
+    loadBadges();
+  }, []);
 
   // Load progress from localStorage or API
   useEffect(() => {
@@ -301,7 +229,7 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
   const checkAndAwardBadges = () => {
     if (!progress) return;
 
-    defaultBadges.forEach(badge => {
+    allBadges.forEach(badge => {
       const alreadyEarned = badges.some(b => b.badgeId === badge.id);
       if (alreadyEarned) return;
 
@@ -349,7 +277,7 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
         progress,
         lessonProgress,
         badges,
-        allBadges: defaultBadges,
+        allBadges,
         isLoading,
         updateLessonProgress,
         completeLessons,
