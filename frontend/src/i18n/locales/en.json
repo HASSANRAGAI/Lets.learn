@@ -136,7 +136,9 @@
     "newChallenge": "New challenge available!",
     "completed": "Challenge completed!",
     "reward": "+{{coins}} Scratchy Coins!",
-    "tellJoke": "Tell me today's joke!"
+    "tellJoke": "Tell me today's joke!",
+    "startChallenge": "Start Challenge! 🚀",
+    "comeBackTomorrow": "Come back tomorrow for a new challenge!"
   },
   "characters": {
     "scratchy": {

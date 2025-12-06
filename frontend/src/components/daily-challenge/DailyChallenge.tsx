@@ -178,7 +178,7 @@ export function DailyChallengeCard({ onComplete }: DailyChallengeCardProps) {
                 onClick={() => setShowPuzzle(true)}
                 className="w-full py-3 bg-gradient-to-r from-orange-400 to-pink-500 hover:from-orange-500 hover:to-pink-600 text-white rounded-xl font-bold transition-all transform hover:scale-102 shadow-lg"
               >
-                Start Challenge! 🚀
+                {t('dailyChallenge.startChallenge')}
               </button>
             )}
 
@@ -188,7 +188,7 @@ export function DailyChallengeCard({ onComplete }: DailyChallengeCardProps) {
                 <p className="text-green-600 font-bold mt-2">
                   {t('dailyChallenge.reward', { coins: challenge.coinsReward })}
                 </p>
-                <p className="text-gray-500 text-sm mt-1">Come back tomorrow for a new challenge!</p>
+                <p className="text-gray-500 text-sm mt-1">{t('dailyChallenge.comeBackTomorrow')}</p>
               </div>
             )}
           </>
