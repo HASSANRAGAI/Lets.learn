@@ -53,6 +53,21 @@ interface ApiDailyChallenge {
   puzzle_type?: string;
 }
 
+interface ApiBadge {
+  id: string;
+  title: string;
+  title_ar: string;
+  description: string;
+  description_ar: string;
+  icon: string;
+  category: string;
+  requirement_type: string;
+  requirement_value: number;
+  coins_reward: number;
+  funny_message: string;
+  funny_message_ar: string;
+}
+
 /**
  * Get authentication token from localStorage
  */
@@ -172,4 +187,19 @@ export async function completeDailyChallenge(): Promise<{ message: string; coins
   }
   
   return await response.json();
+}
+
+/**
+ * Fetch all badge definitions from the backend
+ */
+export async function fetchBadges(): Promise<ApiBadge[]> {
+  const response = await fetch(`${API_URL}/api/badges/`, {
+    headers: createHeaders(),
+  });
+  
+  if (!response.ok) {
+    throw new Error('Failed to fetch badges');
+  }
+  
+  return response.json();
 }
