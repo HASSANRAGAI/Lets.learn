@@ -62,7 +62,6 @@ async def get_leaderboard(limit: int = 10):
 async def get_daily_challenge():
     """Get today's daily challenge."""
     from app.models.course import Lesson
-    from datetime import date
     
     # Get all daily challenges from database
     challenges = await Lesson.find(Lesson.course_id == "daily_challenges").sort("+order").to_list()
@@ -98,7 +97,6 @@ async def complete_daily_challenge(
 ):
     """Complete today's daily challenge and earn coins."""
     from app.models.course import Lesson
-    from datetime import date
     
     today = date.today()
     

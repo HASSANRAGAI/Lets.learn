@@ -33,18 +33,18 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
       try {
         const badgesData = await fetchBadges();
         const mappedBadges: Badge[] = badgesData.map(badge => ({
-          id: badge.id,
-          title: badge.title,
-          titleAr: badge.title_ar,
-          description: badge.description,
-          descriptionAr: badge.description_ar,
-          icon: badge.icon,
-          category: badge.category,
-          requirementType: badge.requirement_type,
-          requirementValue: badge.requirement_value,
-          coinsReward: badge.coins_reward,
-          funnyMessage: badge.funny_message,
-          funnyMessageAr: badge.funny_message_ar,
+          id: badge.id || '',
+          title: badge.title || 'Achievement',
+          titleAr: badge.title_ar || 'إنجاز',
+          description: badge.description || '',
+          descriptionAr: badge.description_ar || '',
+          icon: badge.icon || '🏆',
+          category: badge.category || 'general',
+          requirementType: badge.requirement_type || '',
+          requirementValue: badge.requirement_value || 0,
+          coinsReward: badge.coins_reward || 0,
+          funnyMessage: badge.funny_message || '',
+          funnyMessageAr: badge.funny_message_ar || '',
         }));
         setAllBadges(mappedBadges);
       } catch (error) {
